@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="overshare">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>overshare</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Tesseract.js client-side in-browser OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script>
+    window.overshareRecognizeText = async function(imageSource) {
+      if (typeof Tesseract === 'undefined') {
+        throw new Error('Tesseract.js OCR library failed to load.');
+      }
+      try {
+        const result = await Tesseract.recognize(imageSource, 'eng');
+        const lines = (result.data.lines || []).map(function(line) {
+          return {
+            text: line.text || '',
+            bbox: {
+              x0: (line.bbox && line.bbox.x0) || 0,
+              y0: (line.bbox && line.bbox.y0) || 0,
+              x1: (line.bbox && line.bbox.x1) || 0,
+              y1: (line.bbox && line.bbox.y1) || 0
+            },
+            words: (line.words || []).map(function(w) {
+              return {
+                text: w.text || '',
+                bbox: {
+                  x0: (w.bbox && w.bbox.x0) || 0,
+                  y0: (w.bbox && w.bbox.y0) || 0,
+                  x1: (w.bbox && w.bbox.x1) || 0,
+                  y1: (w.bbox && w.bbox.y1) || 0
+                }
+              };
+            })
+          };
+        });
+        return JSON.stringify(lines);
+      } catch (err) {
+        console.error('Tesseract Web OCR error:', err);
+        throw err;
+      }
+    };
+
+    window.overshareDownloadFile = function(base64Data, fileName, mimeType) {
+      try {
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: mimeType || 'image/png' });
+        const blobUrl = URL.createObjectURL(blob);
+
+        const anchor = document.createElement('a');
+        anchor.href = blobUrl;
+        anchor.download = fileName || 'overshare_safe.png';
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+
+        setTimeout(function() {
+          URL.revokeObjectURL(blobUrl);
+        }, 15000);
+
+        return blobUrl;
+      } catch (err) {
+        console.error('Web download error:', err);
+        return '';
+      }
+    };
+  </script>
+</head>
+<body>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
+
+    For more details:
+    * https://docs.flutter.dev/platform-integration/web/initialization
+  -->
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
