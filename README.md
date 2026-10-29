@@ -1,3 +1,4 @@
+
 # OVERSHARE 🛡️
 > *"Before You Share It, Know What It Reveals."*
 
@@ -265,3 +266,6 @@ npm start
 1. **OCR Environment**: Google ML Kit OCR performs best on high-contrast digital text and screenshots. Severely blurred photos, heavy distortion, or low-resolution scans may result in missed characters.
 2. **Web Target Limitations**: Google ML Kit OCR and Face Detection rely on native Android/iOS libraries and are unavailable on Web. In Web mode, OVERSHARE provides manual canvas drag-to-redact and disables SQLite history with an in-memory session.
 3. **Supported Formats**: Static raster images (`.png`, `.jpg`, `.jpeg`, `.webp`). Animated GIFs, video recordings, and multi-page PDF documents are currently out of scope.
+=======
+# OVERSHARE
+
